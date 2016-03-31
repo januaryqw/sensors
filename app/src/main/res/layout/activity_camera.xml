@@ -4,14 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="sg.edu.nus.sensors.MainActivity">
-
+    tools:context="sg.edu.nus.sensors.CameraActivity">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/camera"
         android:id="@+id/button"
-        android:onClick="goToCamera"
+        android:onClick="dispatchTakeVideoIntent"
         />
-
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 </LinearLayout>

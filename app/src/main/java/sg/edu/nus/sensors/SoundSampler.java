@@ -1,7 +1,10 @@
-package sg.edu.nus.cs3218tut_qiaowei;
+package sg.edu.nus.sensors;
 
 import android.media.AudioRecord;
 import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by ngtk on 4/2/16.
@@ -14,7 +17,7 @@ public class SoundSampler {
     private int               nChannels = 16;
     private Thread            recordingThread;
 
-    public SoundSampler(sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity mAct) throws Exception
+    public SoundSampler(sg.edu.nus.sensors.SoundSamplingActivity mAct) throws Exception
     {
         try {
             if (audioRecord != null) {
@@ -47,8 +50,8 @@ public class SoundSampler {
             throw new Exception();
         }
 
-        sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
-        sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.buffer = new short[sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.bufferSize];
+        SoundSamplingActivity.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
+        SoundSamplingActivity.buffer = new short[SoundSamplingActivity.bufferSize];
 
         audioRecord.startRecording();
 
@@ -58,9 +61,15 @@ public class SoundSampler {
             {
                 while (true)
                 {
+                    long milliseconds = System.currentTimeMillis();
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+                    Date resultDate = new Date(milliseconds);
 
-                    audioRecord.read(sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.buffer, 0, SoundSamplingActivity.bufferSize);
-                    sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.surfaceView.drawThread.setBuffer(sg.edu.nus.cs3218tut_qiaowei.SoundSamplingActivity.buffer);
+                    String ts = sdf.format(resultDate);
+                    System.out.println("Audio: " + ts + ' ' + SoundSamplingActivity.bufferSize);
+
+                    audioRecord.read(SoundSamplingActivity.buffer, 0, SoundSamplingActivity.bufferSize);
+                    SoundSamplingActivity.surfaceView.drawThread.setBuffer(SoundSamplingActivity.buffer);
 
                 }
             }

@@ -1,4 +1,4 @@
-package sg.edu.nus.cs3218tut_qiaowei;
+package sg.edu.nus.sensors;
 
 import android.content.Context;
 import android.graphics.Bitmap;

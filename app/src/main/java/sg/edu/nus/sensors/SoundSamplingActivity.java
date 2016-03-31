@@ -1,4 +1,4 @@
-package sg.edu.nus.cs3218tut_qiaowei;
+package sg.edu.nus.sensors;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.widget.Toast;
 public class SoundSamplingActivity extends Activity {
 
 
-    public  static sg.edu.nus.cs3218tut_qiaowei.CSurfaceViewSoundSampling surfaceView;
-    private SoundSampler   	soundSampler;
+    public  static sg.edu.nus.sensors.CSurfaceViewSoundSampling surfaceView;
+    private sg.edu.nus.sensors.SoundSampler soundSampler;
     public  static short[]  buffer;
     public  static int      bufferSize;     // in bytes
 
@@ -19,7 +19,7 @@ public class SoundSamplingActivity extends Activity {
 
         /****/
         try {
-            CSurfaceViewSoundSampling.drawFlag = false;
+            sg.edu.nus.sensors.CSurfaceViewSoundSampling.drawFlag = false;
             surfaceView.drawThread.join();
         } catch (InterruptedException localInterruptedException) {
 
@@ -35,7 +35,7 @@ public class SoundSamplingActivity extends Activity {
         setContentView(R.layout.activity_sound_sampling);
 
         try {
-            soundSampler = new SoundSampler(this);
+            soundSampler = new sg.edu.nus.sensors.SoundSampler(this);
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Cannot instantiate SoundSampler", Toast.LENGTH_LONG).show();
@@ -47,7 +47,7 @@ public class SoundSamplingActivity extends Activity {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
         }
 
-        surfaceView = (sg.edu.nus.cs3218tut_qiaowei.CSurfaceViewSoundSampling)findViewById(R.id.surfaceView);
+        surfaceView = (sg.edu.nus.sensors.CSurfaceViewSoundSampling)findViewById(R.id.surfaceView);
         surfaceView.drawThread.setBuffer(buffer);
     }
 

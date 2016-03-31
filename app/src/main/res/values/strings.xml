@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Sensors</string>
     <string name="camera">Get Camera Data</string>
+    <string name="audio">Get Audio Data</string>
+    <string name="accelerometer">Get Accelerometer Data</string>
+    <string name="capture_sound">Get Sound Data</string>
+    <string name="goToMainActivity">Back to Main</string>
 </resources>

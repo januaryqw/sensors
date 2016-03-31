@@ -10,8 +10,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/camera"
-        android:id="@+id/button"
+        android:id="@+id/button1"
         android:onClick="goToCamera"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accelerometer"
+        android:id="@+id/button2"
+        android:onClick="goToAccelerometer"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/audio"
+        android:id="@+id/button3"
+        android:onClick="goToAudio"
+        />
+
 
 </LinearLayout>

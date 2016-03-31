@@ -20,6 +20,11 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
     }
+
+    public void goToMainActivity(View view){
+        finish();
+    }
+
     public void dispatchTakeVideoIntent(View v) {
         mVideoView = (VideoView)findViewById(R.id.video_view);
         media_Controller = new MediaController(this);

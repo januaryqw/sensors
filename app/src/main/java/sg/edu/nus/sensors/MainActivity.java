@@ -21,7 +21,14 @@ public class MainActivity extends Activity {
 
     //accelerometer
     public void goToAccelerometer(View view){
-        myIntent = new Intent(this, );
+        myIntent = new Intent(this, AccelerometerActivity.class);
+        startActivity(myIntent);
+    }
+
+    //audio
+    public void goToAudio(View view){
+        myIntent = new Intent(this, SoundSamplingActivity.class);
+        startActivity(myIntent);
     }
 
 }

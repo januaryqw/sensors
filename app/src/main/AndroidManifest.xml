@@ -5,7 +5,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-
+    <uses-feature android:name="com.android.hardware.camera2.full"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -29,12 +30,20 @@
         </activity>
         <activity android:name=".CameraActivity" />
         <activity android:name=".AccelerometerActivity" />
-        <activity android:name=".SoundSamplingActivity" />
         <activity android:name=".GatherDataActivity" />
         <activity
             android:name=".DataReaderScrollingActivity"
             android:label="@string/title_activity_data_reader_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".VideoActivity"
+            android:screenOrientation="landscape"/>
+
+        <activity android:name=".Camera2Activity"></activity>
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

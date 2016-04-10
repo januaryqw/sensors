@@ -34,6 +34,10 @@ public class MainActivity extends Activity {
         myIntent = new Intent(this, DataReaderScrollingActivity.class);
         startActivity(myIntent);
     }
+    public void goToVideoRecorder(View view){
+        myIntent = new Intent(this, VideoActivity.class);
+        startActivity(myIntent);
+    }
 
 }
 

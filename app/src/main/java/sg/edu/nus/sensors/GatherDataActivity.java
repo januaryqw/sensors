@@ -37,6 +37,14 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
 
         try {
             this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            if (!dir.exists()){
+                if(dir.mkdirs()){
+                    System.out.println("mkdir succeed.");
+                }
+                else{
+                    System.out.println("cannot mkdir");
+                }
+            }
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
@@ -68,8 +76,9 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
     @Override
     protected void onStop() {
         sensorManager.unregisterListener((SensorEventListener) this);
-        soundSampler.stop();
+
         try {
+            soundSampler.stop();
             this.bwForAccelerometer.close();
             this.fwForAccelerometer.close();
         }catch (Exception e){

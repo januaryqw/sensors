@@ -28,8 +28,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraActivity" />
-        <activity android:name=".AccelerometerActivity"></activity>
-        <activity android:name=".SoundSamplingActivity"></activity>
+        <activity android:name=".AccelerometerActivity" />
+        <activity android:name=".SoundSamplingActivity" />
+        <activity android:name=".GatherDataActivity" />
+        <activity
+            android:name=".DataReaderScrollingActivity"
+            android:label="@string/title_activity_data_reader_scrolling"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

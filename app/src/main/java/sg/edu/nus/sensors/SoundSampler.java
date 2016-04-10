@@ -3,9 +3,11 @@ package sg.edu.nus.sensors;
 import android.media.AudioRecord;
 import android.util.Log;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 /**
  * Created by ngtk on 4/2/16.
  */
@@ -15,16 +17,29 @@ public class SoundSampler {
     public AudioRecord audioRecord;
     private int               audioEncoding = 2;
     private int               nChannels = 16;
-    private Thread            recordingThread;
+    public Thread            recordingThread;
+    public  static short[]  buffer;
+    public  static int      bufferSize;     // in bytes
+    public static String timestamp;
+    public boolean stop;
+    static File fileForAudio;
+    static FileWriter fwForAudio;
+    static BufferedWriter bwForAudio;
+    static String path;
 
-    public SoundSampler(sg.edu.nus.sensors.SoundSamplingActivity mAct) throws Exception
+
+    public SoundSampler(String path) throws Exception
     {
         try {
+            this.path = path;
             if (audioRecord != null) {
                 audioRecord.stop();
                 audioRecord.release(); // not join
             }
             audioRecord = new AudioRecord(1, FS, nChannels, audioEncoding, AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding));
+            /*this.fileForAudio = new File(path, "audio.txt");
+            this.fwForAudio = new FileWriter(this.fileForAudio);
+            this.bwForAudio = new BufferedWriter(this.bwForAudio);*/
         }
         catch (Exception e) {
             Log.d("Error in SoundSampler ", e.getMessage());
@@ -36,22 +51,31 @@ public class SoundSampler {
     }
 
 
-    public void init() throws Exception
+    public void init(String path) throws Exception
     {
         try {
+            this.path = path;
             if (audioRecord != null) {
                 audioRecord.stop();
                 audioRecord.release();
             }
             audioRecord = new AudioRecord(1, FS, nChannels, audioEncoding, AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding));
+            /*this.fileForAudio = new File(path, "audio.txt");
+            this.fwForAudio = new FileWriter(this.fileForAudio);
+            this.bwForAudio = new BufferedWriter(this.bwForAudio);*/
         }
         catch (Exception e) {
             Log.d("Error in Init() ", e.getMessage());
             throw new Exception();
         }
 
-        SoundSamplingActivity.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
-        SoundSamplingActivity.buffer = new short[SoundSamplingActivity.bufferSize];
+        this.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
+        this.buffer = new short[this.bufferSize];
+        this.stop = false;
+        this.fileForAudio = new File(path, "accelerometer.txt");
+        this.fwForAudio = new FileWriter(this.fileForAudio, true);
+        this.bwForAudio = new BufferedWriter(this.fwForAudio);
+
 
         audioRecord.startRecording();
 
@@ -61,16 +85,29 @@ public class SoundSampler {
             {
                 while (true)
                 {
+                    audioRecord.read(SoundSampler.buffer, 0, SoundSampler.bufferSize);
+
+                    // the recoding timestamps
+                    System.out.println(System.nanoTime()/1000);
                     long milliseconds = System.currentTimeMillis();
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
                     Date resultDate = new Date(milliseconds);
-
                     String ts = sdf.format(resultDate);
-                    System.out.println("Audio: " + ts + ' ' + SoundSamplingActivity.bufferSize);
-
-                    audioRecord.read(SoundSamplingActivity.buffer, 0, SoundSamplingActivity.bufferSize);
-                    SoundSamplingActivity.surfaceView.drawThread.setBuffer(SoundSamplingActivity.buffer);
-
+                    SoundSampler.timestamp = ts;
+                    System.out.println("Audio: " + ts + ' ' + SoundSampler.bufferSize);
+                    for (int i=0; i<SoundSampler.bufferSize; i++) {
+                        System.out.print(SoundSampler.buffer[i] + "  ");
+                    }
+                    System.out.println();
+                    try {
+                        SoundSampler.bwForAudio.write(ts);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        break;
+                    }
+                    if (stop){
+                        break;
+                    }
                 }
             }
         };
@@ -78,8 +115,18 @@ public class SoundSampler {
 
         return;
 
-
-
+    }
+    public void stop(){
+        try {
+            stop = true;
+            recordingThread.join();
+            audioRecord.stop();
+            // SoundSampler.bwForAudio.close();
+        } catch (InterruptedException localInterruptedException) {
+            System.out.println(localInterruptedException);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

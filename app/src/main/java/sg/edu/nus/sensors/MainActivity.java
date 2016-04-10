@@ -25,9 +25,13 @@ public class MainActivity extends Activity {
         startActivity(myIntent);
     }
 
-    //audio
-    public void goToAudio(View view){
-        myIntent = new Intent(this, SoundSamplingActivity.class);
+    public void getAudioAndAccelerometerData(View view){
+        myIntent = new Intent(this, GatherDataActivity.class);
+        startActivity(myIntent);
+    }
+
+    public void goToDataReader(View view){
+        myIntent = new Intent(this, DataReaderScrollingActivity.class);
         startActivity(myIntent);
     }
 

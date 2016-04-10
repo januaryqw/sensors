@@ -23,9 +23,16 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/audio"
+        android:text="@string/audio_accelerometer"
         android:id="@+id/button3"
-        android:onClick="goToAudio"
+        android:onClick="getAudioAndAccelerometerData"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/data_reader"
+        android:id="@+id/button4"
+        android:onClick="goToDataReader"
         />
 
 

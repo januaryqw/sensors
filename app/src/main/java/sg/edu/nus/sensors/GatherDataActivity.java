@@ -37,6 +37,14 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
 
         try {
             this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            if (!dir.exists()){
+                if(dir.mkdirs()){
+                    System.out.println("mkdir succeed.");
+                }
+                else{
+                    System.out.println("cannot mkdir");
+                }
+            }
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
@@ -58,7 +66,7 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
-            soundSampler.init(getApplicationInfo().dataDir + "/Sensors/");
+            soundSampler.init(getApplicationInfo().dataDir + "/Sensors/audio.txt");
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
         }

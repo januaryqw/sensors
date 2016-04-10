@@ -11,6 +11,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //PatternRecogManager pr = new PatternRecogManager();
+        //System.out.println(pr.getRecordedAudioList(this,1));
     }
 
     //camera
@@ -32,6 +34,17 @@ public class MainActivity extends Activity {
 
     public void goToDataReader(View view){
         myIntent = new Intent(this, DataReaderScrollingActivity.class);
+        startActivity(myIntent);
+    }
+    public void goToPatternRecog(View view){
+        PatternRecogManager pr = new PatternRecogManager();
+        double [] correlation =  pr.getCorrelation(this);
+        for (int i = 0; i < correlation.length; i ++) {
+            System.out.print(correlation[i] + " ");
+        }
+    }
+    public void goToGetCheeseSample(View view){
+        myIntent = new Intent(this, GetCheeseSample.class);
         startActivity(myIntent);
     }
 

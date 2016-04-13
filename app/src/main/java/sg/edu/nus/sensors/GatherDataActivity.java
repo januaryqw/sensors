@@ -67,6 +67,8 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
             soundSampler.init(getApplicationInfo().dataDir + "/Sensors/audio.txt");
+            System.out.println("path of audio file: "+ getApplicationInfo().dataDir + "/Sensors/audio.txt");
+
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
         }

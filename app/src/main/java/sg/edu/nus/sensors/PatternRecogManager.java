@@ -5,6 +5,7 @@ import android.content.Context;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
 
@@ -12,11 +13,12 @@ import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
  * Created by zhang_000 on 2016-04-10.
  */
 public class PatternRecogManager {
+    ArrayList<String> timestamps = new ArrayList<String>();
     public double[] getCorrelation(Context context){
         double[] recorded_hn = getRecordedAudioList(context, 1);
         double[] sample_xn = getRecordedAudioList(context, 2);
-        double[] FFT_Hk = getFFT(recorded_hn);
-        double[] FFT_Xk = getFFT(sample_xn);
+        double[] FFT_Hk = getFFT(convertRealToImaginary(recorded_hn));
+        double[] FFT_Xk = getFFT(convertRealToImaginary(sample_xn));
         double[] x_conjugate = getComplexConjugate(FFT_Xk);
         double[] G_k = getPointMultiplication(FFT_Hk,x_conjugate);
         return getInverseFFT(G_k);
@@ -32,6 +34,7 @@ public class PatternRecogManager {
             }
             File dir = new File(context.getApplicationInfo().dataDir + "/Sensors/");
             File file = new File(dir, filename);
+            System.out.println("path**:"+file.getAbsolutePath());
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
@@ -39,6 +42,9 @@ public class PatternRecogManager {
             while((line = br.readLine())!=null){
                 String[] tokens = line.split("\t");
                 String timestamp = tokens[0];
+                if (option == 1){
+                    timestamps.add(timestamp);
+                }
                 String valuesString = tokens[1].trim();
                 s += valuesString+" ";
             }
@@ -61,32 +67,45 @@ public class PatternRecogManager {
             return null;
         }
     }
-    public double[] getFFT(double[] values){
-
-        int FFT_Len = values.length/2;
+    public double[] convertRealToImaginary(double[] values){
+        int FFT_Len = values.length;
 
         double[] soundFFT = new double[FFT_Len*2];
-        double[] soundFFTTemp = new double[FFT_Len*2];
         int segmentIndex = 0;
         while (segmentIndex < FFT_Len) {
             soundFFT[2*segmentIndex] = (double)values[segmentIndex];
             soundFFT[2*segmentIndex+1] = 0.0;
             segmentIndex++;
         }
+        return soundFFT;
+    }
+    private int getNextPowerOfTwo(int n)
+    {
+        double y = Math.ceil(Math.log(n)/Math.log(2));
+        return (int) Math.pow(2,y);
+    }
+    public double[] getFFT(double[] imaginaryValues){
+        double[] paddedValues = new double[getNextPowerOfTwo(imaginaryValues.length)];
+        for (int i = 0; i < imaginaryValues.length; i ++){
+            paddedValues[i] = imaginaryValues[i];
+        }
+
+        int FFT_Len = paddedValues.length/2;
+        double[] soundFFTTemp = new double[FFT_Len*2];
+
         // fft
         DoubleFFT_1D fft = new DoubleFFT_1D(FFT_Len);
-        fft.complexForward(soundFFT);
-
+        fft.complexForward(paddedValues);
 
         // perform fftshift here
         for (int i=0; i<FFT_Len; i++) {
-            soundFFTTemp[i]         = soundFFT[i+FFT_Len];
-            soundFFTTemp[i+FFT_Len] = soundFFT[i];
+            soundFFTTemp[i]         = paddedValues[i+FFT_Len];
+            soundFFTTemp[i+FFT_Len] = paddedValues[i];
         }
         for (int i=0; i<FFT_Len*2; i++) {
-            soundFFT[i] = soundFFTTemp[i];
+            paddedValues[i] = soundFFTTemp[i];
         }
-        return soundFFT;
+        return paddedValues;
     }
     public double[] getComplexConjugate(double[] FFT){
         int size = FFT.length;

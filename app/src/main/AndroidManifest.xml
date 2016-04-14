@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sg.edu.nus.sensors" >
 
+    <uses-feature android:name="android.hardware.camera.front" />
+    <uses-feature android:name="android.hardware.microphone"/>
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -13,7 +15,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-library android:name="android.widget.VideoView" />
 
     <application
@@ -38,13 +39,6 @@
         <activity
             android:name=".AudioVideoActivity"
             android:screenOrientation="landscape" />
-        <!--
-             ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".GetCheeseSample"

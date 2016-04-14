@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AudioVideoActivity extends Activity{
-    public static CamRecorderSurfaceView surfaceView;
     static Camera mCamera;
     static MediaRecorder mMediaRecorder;
     private static final String TAG = "AudioVideoActivity";
@@ -46,6 +45,7 @@ public class AudioVideoActivity extends Activity{
             Log.d(TAG, "No Camera on this device");
             finish();
         }
+
         mCamera = getCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -57,6 +57,7 @@ public class AudioVideoActivity extends Activity{
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Camera.getCameraInfo(0,new Camera.CameraInfo());
                         toggleButtonText(v, isRecording);
                         if (isRecording) {
                             //getTime() returns current time in milliseconds
@@ -142,7 +143,12 @@ public class AudioVideoActivity extends Activity{
     public static Camera getCameraInstance() {
         Camera camera = null;
         try {
-            camera = Camera.open();
+            if (Camera.getNumberOfCameras() == 2){
+                camera = Camera.open(1);
+            }
+            else{
+                camera = Camera.open();
+            }
         } catch (Exception e) {
             // cannot get camera or does not exist
             e.printStackTrace();
@@ -209,7 +215,7 @@ public class AudioVideoActivity extends Activity{
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
+        CamcorderProfile profile = CamcorderProfile.get(1, CamcorderProfile.QUALITY_HIGH);
         mMediaRecorder.setOutputFormat(profile.fileFormat);
         mMediaRecorder.setVideoFrameRate(profile.videoFrameRate);
         Log.d(TAG, "Video FrameRate is " + profile.videoFrameRate); //30

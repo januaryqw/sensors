@@ -46,8 +46,13 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".GetCheeseSample"
+        <activity
+            android:name=".GetCheeseSample"
             android:label="@string/title_activity_get_cheese_sample" >
+        </activity>
+        <activity
+            android:name=".ViewPictureActivity"
+            android:label="@string/title_activity_view_picture" >
         </activity>
     </application>
 

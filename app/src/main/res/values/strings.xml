@@ -100,4 +100,5 @@
     <string name="title_activity_get_cheese_sample">GetCheeseSample</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_view_picture">ViewPictureActivity</string>
 </resources>

@@ -1,38 +1,87 @@
 package sg.edu.nus.sensors;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Environment;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.File;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 
-public class ViewPictureActivity extends ActionBarActivity {
+public class ViewPictureActivity extends Activity {
+
+    private static final String TAG = "ViewPictureActivity";
+    ImageView img;
+    private static long soundTimestamp;
+    private static long timeLag;
+    private static long videoStartTimestamp;
+    PatternRecogManager pr = new PatternRecogManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_picture);
-    }
+        videoStartTimestamp  = getIntent().getLongExtra("videoStartingTime",0L);
+        Toast.makeText(this, "Received VideoStartTime " + videoStartTimestamp, Toast.LENGTH_LONG).show();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_view_picture, menu);
-        return true;
-    }
+        PatternRecogManager pr = new PatternRecogManager();
+        double [] correlation =  pr.getCorrelation(this);
+        System.out.println("correlation: "+correlation.length);
+        double max = getMagnitude(correlation[0], correlation[1]);
+        int max_index = 0;
+        for (int i = 0; i < correlation.length; i ++) {
+            if (i % 2 == 0) {
+                double value = getMagnitude(correlation[i], correlation[i + 1]);
+                if (value > max) {
+                    max = value;
+                    max_index = i;
+                }
+            }
+        }
+        String timeStampForMaxCorrelation = pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280));
+        soundTimestamp = Long.parseLong(timeStampForMaxCorrelation);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        img = (ImageView) findViewById(R.id.img);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        File sdcard = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MySensorApp");
+        File file = new File(sdcard + File.separator +
+                "VID_TEST" + ".mp4");
+
+        FFmpegMediaMetadataRetriever retriever = new FFmpegMediaMetadataRetriever();
+
+        try {
+            retriever.setDataSource(file.getAbsolutePath());
+            long timeStamp2 = soundTimestamp - videoStartTimestamp;
+            Bitmap bitmap2= retriever.getFrameAtTime(timeStamp2, retriever.OPTION_CLOSEST_SYNC);
+
+            img.setImageBitmap(bitmap2);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException ex) {
+            }
         }
 
-        return super.onOptionsItemSelected(item);
     }
+    public void goToMainActivity(View view){
+        finish();
+    }
+
+    private double getMagnitude(double real, double imag){
+        return Math.log(real * real + imag * imag);
+    }
+
+
+
+
 }

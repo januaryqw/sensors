@@ -16,8 +16,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,8 +26,6 @@ public class AudioVideoActivity extends Activity{
     static MediaRecorder mMediaRecorder;
     private sg.edu.nus.sensors.SoundSampler soundSampler;
     private SurfaceView mPreview;
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
     private boolean isRecording = false;
     private long videoStartingTimestamp;
 
@@ -61,7 +57,6 @@ public class AudioVideoActivity extends Activity{
                         Camera.getCameraInfo(0, new Camera.CameraInfo());
                         toggleButtonText(v, isRecording);
                         if (isRecording) {
-                            //getTime() returns current time in milliseconds
                             Date date = new Date();
                             long milliseconds = System.currentTimeMillis();
                             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
@@ -78,9 +73,6 @@ public class AudioVideoActivity extends Activity{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
-                            // inform the user that recording has stopped
-                            // setCaptureButtonText("Capture");
                             isRecording = false;
                         } else {
 
@@ -93,8 +85,6 @@ public class AudioVideoActivity extends Activity{
                             if (prepareVideoRecorder()) {
                                 // Camera is available and unlocked, MediaRecorder is prepared,
                                 // now you can start recording
-                                //getTime() returns current time in milliseconds
-
                                 Date date = new Date();
                                 long milliseconds = System.currentTimeMillis();
                                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
@@ -104,13 +94,10 @@ public class AudioVideoActivity extends Activity{
                                 videoStartingTimestamp = date.getTime();
                                 mMediaRecorder.start();
 
-                                // inform the user that recording has started
-                                // setCaptureButtonText("Stop");
                                 isRecording = true;
                             } else {
                                 // prepare didn't work, release the camera
                                 releaseMediaRecorder();
-                                // inform user
                                 soundSampler.stop();
                             }
                         }
@@ -169,63 +156,22 @@ public class AudioVideoActivity extends Activity{
         return camera;
     }
     /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
+    private static File getOutputMediaFile(){
         Log.d(TAG, "get output media file");
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "MySensorApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
                 Log.d("MySensorApp", "failed to create directory");
                 return null;
             }
         }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_TEST" + ".mp4");
-            Log.d(TAG, mediaStorageDir.getPath() + File.separator +
+        Log.d(TAG, mediaStorageDir.getPath() + File.separator +
                     "VID_TEST" + ".mp4");
-        } else {
-            return null;
-        }
-
         return mediaFile;
     }
-
-    android.hardware.Camera.PictureCallback mPicture = new Camera.PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-            if (pictureFile == null) {
-                Log.d(TAG, "Error creating media file, check storage permissions: ");
-                return;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
-        }
-    };
 
     private void releaseMediaRecorder(){
         Log.d(TAG, "release media recorder");
@@ -267,7 +213,7 @@ public class AudioVideoActivity extends Activity{
 
 
         // Step 4: Set output file
-        mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+        mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
 
         // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());

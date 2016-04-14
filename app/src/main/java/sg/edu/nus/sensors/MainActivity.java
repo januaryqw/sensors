@@ -36,6 +36,16 @@ public class MainActivity extends Activity {
         myIntent = new Intent(this, DataReaderScrollingActivity.class);
         startActivity(myIntent);
     }
+
+    public void goToVideoRecorder(View view){
+        myIntent = new Intent(this, VideoActivity.class);
+        startActivity(myIntent);
+    }
+    public void goToViewPicture(View view){
+        myIntent = new Intent(this, ViewPictureActivity.class);
+        startActivity(myIntent);
+    }
+
     public void goToPatternRecog(View view){
         PatternRecogManager pr = new PatternRecogManager();
         double [] correlation =  pr.getCorrelation(this);

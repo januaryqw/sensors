@@ -1,6 +1,7 @@
 package sg.edu.nus.sensors;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +39,7 @@ public class DataReaderScrollingActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+        this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
         this.file = new File(dir, "accelerometer.txt");
         try{
             fr = new FileReader(this.file);

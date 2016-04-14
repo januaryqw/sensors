@@ -38,15 +38,11 @@ public class SoundSampler {
                 audioRecord.release(); // not join
             }
             audioRecord = new AudioRecord(1, FS, nChannels, audioEncoding, AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding));
-            /*this.fileForAudio = new File(path, "audio.txt");
-            this.fwForAudio = new FileWriter(this.fileForAudio);
-            this.bwForAudio = new BufferedWriter(this.bwForAudio);*/
         }
         catch (Exception e) {
             Log.d("Error in SoundSampler ", e.getMessage());
             throw new Exception();
         }
-
         return;
 
     }
@@ -61,9 +57,6 @@ public class SoundSampler {
                 audioRecord.release();
             }
             audioRecord = new AudioRecord(1, FS, nChannels, audioEncoding, AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding));
-            /*this.fileForAudio = new File(path, "audio.txt");
-            this.fwForAudio = new FileWriter(this.fileForAudio);
-            this.bwForAudio = new BufferedWriter(this.bwForAudio);*/
         }
         catch (Exception e) {
             Log.d("Error in Init() ", e.getMessage());

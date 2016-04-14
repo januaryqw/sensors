@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -36,7 +37,7 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         try {
-            this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             if (!dir.exists()){
                 if(dir.mkdirs()){
                     System.out.println("mkdir succeed.");
@@ -49,7 +50,7 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
 
-            soundSampler = new sg.edu.nus.sensors.SoundSampler(getApplicationInfo().dataDir + "/Sensors/");
+            soundSampler = new sg.edu.nus.sensors.SoundSampler(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,12 +63,12 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
         super.onStart();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         try {
-            this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
-            soundSampler.init(getApplicationInfo().dataDir + "/Sensors/audio.txt");
-            System.out.println("path of audio file: "+ getApplicationInfo().dataDir + "/Sensors/audio.txt");
+            soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
+            System.out.println("path of audio file: "+ Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
@@ -78,8 +79,9 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
     @Override
     protected void onStop() {
         sensorManager.unregisterListener((SensorEventListener) this);
-        soundSampler.stop();
+
         try {
+            soundSampler.stop();
             this.bwForAccelerometer.close();
             this.fwForAccelerometer.close();
         }catch (Exception e){
@@ -126,9 +128,9 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
 
     private void writeToFile(String data) {
         try {
-            // File sdCard = Environment.getExternalStorageDirectory();
+            // File sdCard = ;
             // File dir = new File (sdCard.getAbsolutePath() + "/Sensors/");
-            File dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            File dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
 
             if (!dir.exists()) {
                 if (dir.mkdirs()) {

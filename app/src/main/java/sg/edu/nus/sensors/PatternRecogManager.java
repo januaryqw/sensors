@@ -1,6 +1,7 @@
 package sg.edu.nus.sensors;
 
 import android.content.Context;
+import android.os.Environment;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +33,7 @@ public class PatternRecogManager {
             else {
                 filename = "cheese.txt";
             }
-            File dir = new File(context.getApplicationInfo().dataDir + "/Sensors/");
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             File file = new File(dir, filename);
             System.out.println("path**:"+file.getAbsolutePath());
             FileReader fr = new FileReader(file);

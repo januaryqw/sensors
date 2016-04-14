@@ -25,7 +25,7 @@ public class AudioVideoActivity extends Activity{
     public static CamRecorderSurfaceView surfaceView;
     static Camera mCamera;
     static MediaRecorder mMediaRecorder;
-    private static final String TAG = "VideoActivity";
+    private static final String TAG = "AudioVideoActivity";
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private boolean isRecording = false;
@@ -43,7 +43,7 @@ public class AudioVideoActivity extends Activity{
             e.printStackTrace();
         }
         if (!checkCameraHardware(this)) {
-            System.out.println("No Camera on this device");
+            Log.d(TAG, "No Camera on this device");
             finish();
         }
         mCamera = getCameraInstance();
@@ -57,22 +57,15 @@ public class AudioVideoActivity extends Activity{
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
 
-                        Date date = new Date();
-                        //getTime() returns current time in milliseconds
-                        long milliseconds = System.currentTimeMillis();
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
-                        Date resultDate = new Date(milliseconds);
-
-                        String ts = sdf.format(resultDate);
-                        Log.d(TAG, " " + date.getTime());
-                        Log.d(TAG, " " + ts);
                         if (isRecording) {
+                            //getTime() returns current time in milliseconds
+                            Date date = new Date();
+                            long milliseconds = System.currentTimeMillis();
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+                            Date resultDate = new Date(milliseconds);
+                            String ts = sdf.format(resultDate);
+                            Log.d(TAG, "MediaRecorder End Time: " + date.getTime() + "    " + ts);
                             // stop recording and release camera
                             mMediaRecorder.stop();  // stop the recording
                             releaseMediaRecorder(); // release the MediaRecorder object
@@ -88,10 +81,25 @@ public class AudioVideoActivity extends Activity{
                             // setCaptureButtonText("Capture");
                             isRecording = false;
                         } else {
+
+                            try {
+                                soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             // initialize video camera
                             if (prepareVideoRecorder()) {
                                 // Camera is available and unlocked, MediaRecorder is prepared,
                                 // now you can start recording
+                                //getTime() returns current time in milliseconds
+
+                                Date date = new Date();
+                                long milliseconds = System.currentTimeMillis();
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+                                Date resultDate = new Date(milliseconds);
+                                String ts = sdf.format(resultDate);
+                                Log.d(TAG, "MediaRecorder Start Time: " + date.getTime() + "    " + ts);
+
                                 mMediaRecorder.start();
 
                                 // inform the user that recording has started
@@ -101,6 +109,7 @@ public class AudioVideoActivity extends Activity{
                                 // prepare didn't work, release the camera
                                 releaseMediaRecorder();
                                 // inform user
+                                soundSampler.stop();
                             }
                         }
                     }
@@ -112,7 +121,6 @@ public class AudioVideoActivity extends Activity{
      * Check if this device has a camera
      */
     private boolean checkCameraHardware(Context context) {
-        Log.d(TAG, "checking camera hardware");
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
             return true;
@@ -123,7 +131,6 @@ public class AudioVideoActivity extends Activity{
     }
 
     public static Camera getCameraInstance() {
-        Log.d(TAG, "get camera instance");
         Camera camera = null;
         try {
             camera = Camera.open();
@@ -138,7 +145,6 @@ public class AudioVideoActivity extends Activity{
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d(TAG, "mPicture");
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null) {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
@@ -252,7 +258,7 @@ public class AudioVideoActivity extends Activity{
         } else if(type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_TEST" + ".mp4");
-            System.out.println(mediaStorageDir.getPath() + File.separator +
+            Log.d(TAG, mediaStorageDir.getPath() + File.separator +
                     "VID_TEST" + ".mp4");
         } else {
             return null;
@@ -266,9 +272,10 @@ public class AudioVideoActivity extends Activity{
 
 
     protected void onStop() {
-
         try {
             soundSampler.stop();
+            releaseMediaRecorder();
+            releaseCamera();
         }catch (Exception e){
             e.printStackTrace();
         }

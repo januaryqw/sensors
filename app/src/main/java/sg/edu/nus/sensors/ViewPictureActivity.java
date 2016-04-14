@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.Date;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -18,7 +16,7 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public class ViewPictureActivity extends Activity {
 
     private static final String TAG = "ViewPictureActivity";
-    ImageView img1;
+    ImageView img;
     private static long soundTimestamp;
     private static long timeLag;
     private static long videoStartTimestamp;
@@ -48,7 +46,7 @@ public class ViewPictureActivity extends Activity {
         String timeStampForMaxCorrelation = pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280));
         soundTimestamp = Long.parseLong(timeStampForMaxCorrelation);
 
-        img1 = (ImageView) findViewById(R.id.img);
+        img = (ImageView) findViewById(R.id.img);
 
         File sdcard = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "MySensorApp");
@@ -59,11 +57,10 @@ public class ViewPictureActivity extends Activity {
 
         try {
             retriever.setDataSource(file.getAbsolutePath());
-            long timeStamp = soundTimestamp - videoStartTimestamp
+            long timeStamp2 = soundTimestamp - videoStartTimestamp;
             Bitmap bitmap2= retriever.getFrameAtTime(timeStamp2, retriever.OPTION_CLOSEST_SYNC);
 
-            img1.setImageBitmap(bitmap1);
-            img2.setImageBitmap(bitmap2);
+            img.setImageBitmap(bitmap2);
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
         } catch (RuntimeException ex) {

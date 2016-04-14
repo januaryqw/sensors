@@ -57,7 +57,7 @@ public class AudioVideoActivity extends Activity{
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        toggleButtonText(v, isRecording);
                         if (isRecording) {
                             //getTime() returns current time in milliseconds
                             Date date = new Date();
@@ -116,6 +116,15 @@ public class AudioVideoActivity extends Activity{
                 }
         );
 
+    }
+    private void toggleButtonText(View v, boolean isRecording){
+        Button button = (Button) v;
+        if (isRecording){
+            button.setText("Start Recording");
+        }
+        else{
+            button.setText("Stop Recording");
+        }
     }
     /**
      * Check if this device has a camera
@@ -254,8 +263,8 @@ public class AudioVideoActivity extends Activity{
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE){
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_TEST" + ".mp4");
             Log.d(TAG, mediaStorageDir.getPath() + File.separator +

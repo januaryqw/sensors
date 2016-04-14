@@ -90,9 +90,9 @@ public class SoundSampler {
                     String ts = sdf.format(resultDate);
                     Log.d(TAG, "Audio: " + ts + ' ' + SoundSampler.bufferSize);
                     for (int i=0; i<SoundSampler.bufferSize; i++) {
-                        Log.d(TAG, SoundSampler.buffer[i] + "  ");
+                        System.out.print(SoundSampler.buffer[i] + "  ");
                     }
-                    Log.d(TAG,"\n");
+                    System.out.println();
 
                     Date date = new Date();
                     long timeStamp = date.getTime();

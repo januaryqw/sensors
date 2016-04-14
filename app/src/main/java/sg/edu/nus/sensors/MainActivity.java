@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
@@ -40,9 +41,14 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        Log.d(TAG, "max: " + max
-                + " index: " + max_index
+        Log.d(TAG, "max correlation: " + max
+                + " index of max: " + max_index
                 + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
+        Toast.makeText(getApplicationContext(),
+                "max correlation: " + max
+                + " index of max: " + max_index
+                + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)),
+                Toast.LENGTH_LONG).show();
     }
     public void goToGetCheeseSample(View view){
         myIntent = new Intent(this, GetCheeseSample.class);

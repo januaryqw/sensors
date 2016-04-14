@@ -7,39 +7,44 @@
     tools:context="sg.edu.nus.sensors.MainActivity">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get 'Cheese' sample"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/getCheeseSample"
         android:id="@+id/button6"
         android:onClick="goToGetCheeseSample"
         />
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/recordAudioVideo"
+        android:id="@+id/button9"
+        android:onClick="goToAudioVideoActivity"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="@string/audio_accelerometer"
         android:id="@+id/button3"
         android:onClick="getAudioAndAccelerometerData"
         />
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="@string/data_reader"
         android:id="@+id/button4"
         android:onClick="goToDataReader"
         />
-
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pattern Recog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/patternRecog"
         android:id="@+id/button8"
         android:onClick="goToPatternRecog"
         />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Record Audio and Video"
-        android:id="@+id/button9"
-        android:onClick="goToAudioVideoActivity"
-        />
+
 </LinearLayout>

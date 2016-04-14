@@ -17,9 +17,23 @@ public class PatternRecogManager {
     ArrayList<String> timestamps = new ArrayList<String>();
     public double[] getCorrelation(Context context){
         double[] recorded_hn = getRecordedAudioList(context, 1);
+        double max = 0;
+        int max_index = 0;
+        for (int i = 0; i < recorded_hn.length; i ++){
+            if (max > recorded_hn[i]){
+                max = recorded_hn[i];
+                max_index = i;
+            }
+        }
+        System.out.println("max volumn is "+max+" at"+timestamps.get((int) Math.ceil(max_index/1280)));
         double[] sample_xn = getRecordedAudioList(context, 2);
-        double[] FFT_Hk = getFFT(convertRealToImaginary(recorded_hn));
-        double[] FFT_Xk = getFFT(convertRealToImaginary(sample_xn));
+        System.out.println("pattern RecogManager recorded_hn length: "+recorded_hn.length);
+        System.out.println("pattern RecogManager sample_xn length: "+sample_xn.length);
+        double[] hn = convertRealToImaginary(recorded_hn);
+        double[] xn = convertRealToImaginary(sample_xn);
+        int length = getLengthOfPadded(hn,xn);
+        double[] FFT_Hk = getFFT(hn, length);
+        double[] FFT_Xk = getFFT(xn, length);
         double[] x_conjugate = getComplexConjugate(FFT_Xk);
         double[] G_k = getPointMultiplication(FFT_Hk,x_conjugate);
         return getInverseFFT(G_k);
@@ -30,8 +44,11 @@ public class PatternRecogManager {
             if (option == 1){
                 filename = "audio.txt";
             }
-            else {
+            else if(option == 2) {
                 filename = "cheese.txt";
+            }
+            else {
+                filename = "";
             }
             File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             File file = new File(dir, filename);
@@ -54,13 +71,16 @@ public class PatternRecogManager {
             double[] values = new double[size];
             for(int i = 0; i < size; i++) {
                 if (valueStringArray[i].startsWith("-")){
-                    values[i] = Integer.parseInt(valueStringArray[i].substring(1));
+                    values[i] = 0 - Integer.parseInt(valueStringArray[i].substring(1).trim());
                 }
                 else{
-                    values[i] = Integer.parseInt(valueStringArray[i]);
+                    values[i] = Integer.parseInt(valueStringArray[i].trim());
                 }
             }
-           return values;
+            if(values == null){
+                System.out.println("whole string is: "+ s);
+            }
+            return values;
 
 
         } catch (Exception e) {
@@ -69,6 +89,7 @@ public class PatternRecogManager {
         }
     }
     public double[] convertRealToImaginary(double[] values){
+        System.out.println("convert Real to imaginary");
         int FFT_Len = values.length;
 
         double[] soundFFT = new double[FFT_Len*2];
@@ -85,8 +106,11 @@ public class PatternRecogManager {
         double y = Math.ceil(Math.log(n)/Math.log(2));
         return (int) Math.pow(2,y);
     }
-    public double[] getFFT(double[] imaginaryValues){
-        double[] paddedValues = new double[getNextPowerOfTwo(imaginaryValues.length)];
+    private int getLengthOfPadded(double[] signal1, double[] signal2){
+        return getNextPowerOfTwo(signal1.length+signal2.length -1);
+    }
+    public double[] getFFT(double[] imaginaryValues, int lengthAfterPadding){
+        double[] paddedValues = new double[lengthAfterPadding];
         for (int i = 0; i < imaginaryValues.length; i ++){
             paddedValues[i] = imaginaryValues[i];
         }
@@ -127,13 +151,21 @@ public class PatternRecogManager {
         double[] result = new double[length1];
         int lengthOfZero = (length1 - length2)/2;
         System.out.println("length of 1: "+length1+", length of 2: "+length2);
-        for (int i = lengthOfZero; i < length2 + lengthOfZero; i ++ ){
-            result[i] = H[i] * Xconjugate[i - lengthOfZero];
+        //(a+bi)(c+di) = (ac -bd) + (ad + bc)i
+        for (int i = lengthOfZero; i < length2 + lengthOfZero; i = i+2 ){
+            //ac-bd
+            double a = H[i];
+            double b = H[i+1];
+            double c = Xconjugate[i-lengthOfZero];
+            double d = Xconjugate[i-lengthOfZero+1];
+            result[i] = a*c - b*d;
+            //ad+bc
+            result[i+1] = a*d + b*c;
         }
         return result;
     }
     public double[] getInverseFFT(double[] G){
-        double[] FFT = getFFT(G);
+        double[] FFT = getFFT(G, getNextPowerOfTwo(G.length));
         int size = FFT.length;
         double[] result = new double[size];
         for (int i = 0; i < FFT.length; i ++){

@@ -72,7 +72,7 @@ public class SoundSampler {
         writer.print("");
         writer.close();
         System.out.println("file size after: " + fileForAudio.length());
-        this.fwForAudio = new FileWriter(this.fileForAudio, true);
+        this.fwForAudio = new FileWriter(this.fileForAudio);
         this.bwForAudio = new BufferedWriter(this.fwForAudio);
 
 

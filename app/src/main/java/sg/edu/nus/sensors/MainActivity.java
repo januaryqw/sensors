@@ -15,12 +15,6 @@ public class MainActivity extends Activity {
         //System.out.println(pr.getRecordedAudioList(this,1));
     }
 
-    //camera
-    public void goToCamera(View view){
-        myIntent = new Intent(this, CameraActivity.class);
-        startActivity(myIntent);
-    }
-
     //accelerometer
     public void goToAccelerometer(View view){
         myIntent = new Intent(this, AccelerometerActivity.class);
@@ -37,20 +31,11 @@ public class MainActivity extends Activity {
         startActivity(myIntent);
     }
 
-    public void goToVideoRecorder(View view){
-        myIntent = new Intent(this, VideoActivity.class);
-        startActivity(myIntent);
-    }
-    public void goToViewPicture(View view){
-        myIntent = new Intent(this, ViewPictureActivity.class);
-        startActivity(myIntent);
-    }
-
     public void goToPatternRecog(View view){
         PatternRecogManager pr = new PatternRecogManager();
         double [] correlation =  pr.getCorrelation(this);
         System.out.println("correlation: "+correlation.length);
-        double max = 0;
+        double max = getMagnitude(correlation[0], correlation[1]);
         int max_index = 0;
         for (int i = 0; i < correlation.length; i ++) {
             if (i % 2 == 0) {
@@ -61,10 +46,14 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        System.out.println("max: "+ max+" index: "+max_index+" timestamp: "+pr.timestamps.get(max_index/2/1280));
+        System.out.println("max: " + max + " index: " + max_index + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
     }
     public void goToGetCheeseSample(View view){
         myIntent = new Intent(this, GetCheeseSample.class);
+        startActivity(myIntent);
+    }
+    public void goToAudioVideoActivity(View view){
+        myIntent = new Intent(this, AudioVideoActivity.class);
         startActivity(myIntent);
     }
     private double getMagnitude(double real, double imag){

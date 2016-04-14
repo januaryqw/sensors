@@ -2,13 +2,11 @@ package sg.edu.nus.sensors;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class GetCheeseSample extends Activity{
 
@@ -22,7 +20,7 @@ public class GetCheeseSample extends Activity{
         setContentView(R.layout.activity_gather_data);
 
         try {
-            this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
+            this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             if (!dir.exists()){
                 if(dir.mkdirs()){
                     System.out.println("mkdir succeed.");
@@ -32,7 +30,7 @@ public class GetCheeseSample extends Activity{
                 }
             }
 
-            soundSampler = new sg.edu.nus.sensors.SoundSampler(getApplicationInfo().dataDir + "/Sensors/");
+            soundSampler = new sg.edu.nus.sensors.SoundSampler(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,8 +42,8 @@ public class GetCheeseSample extends Activity{
         super.onStart();
 
         try {
-            this.dir = new File (getApplicationInfo().dataDir + "/Sensors/");
-            soundSampler.init(getApplicationInfo().dataDir + "/Sensors/cheese.txt");
+            this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
+            soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/cheese.txt");
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
         }
@@ -66,29 +64,4 @@ public class GetCheeseSample extends Activity{
     public void goToMainActivity(View view){
         finish();
     }
-
-    private void writeToFile(String data) {
-        try {
-            File dir = new File (getApplicationInfo().dataDir + "/Sensors/");
-
-            if (!dir.exists()) {
-                if (dir.mkdirs()) {
-                    System.out.println("mkdir succeed.");
-                } else {
-                    System.out.println("cannot mkdir");
-                }
-            }
-
-            File file = new File(dir, "accelerometer.txt");
-
-            FileWriter fw = new FileWriter(file,true); //the true will append the new data
-            fw.write(data);//appends the string to the file
-            fw.close();
-
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
 }

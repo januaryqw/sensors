@@ -9,13 +9,6 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/camera"
-        android:id="@+id/button1"
-        android:onClick="goToCamera"
-        />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/accelerometer"
         android:id="@+id/button2"
         android:onClick="goToAccelerometer"
@@ -41,25 +34,19 @@
         android:id="@+id/button4"
         android:onClick="goToDataReader"
         />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="get video"
-        android:id="@+id/button5"
-        android:onClick="goToVideoRecorder"
-        />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Picture at certain frame"
-        android:id="@+id/button7"
-        android:onClick="goToViewPicture"
-        />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pattern Recog"
         android:id="@+id/button8"
         android:onClick="goToPatternRecog"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record Audio and Video"
+        android:id="@+id/button9"
+        android:onClick="goToAudioVideoActivity"
         />
 </LinearLayout>

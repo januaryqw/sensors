@@ -25,4 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile files('libs/jtransforms-2.4.jar')
+    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.6'
 }

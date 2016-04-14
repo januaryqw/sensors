@@ -42,10 +42,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // empty. Take care of releasing the Camera preview in your activity.
-/*        if (mCamera != null) {
-            mCamera.stopPreview();
-            mCamera.release();
-        }*/
     }
 
     @Override
@@ -64,6 +60,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.stopPreview();
         } catch (Exception e){
             // ignore: tried to stop a non-existent preview
+
         }
 
         // set preview size and make any resize, rotate or

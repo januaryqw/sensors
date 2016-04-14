@@ -41,6 +41,13 @@
         android:id="@+id/button5"
         android:onClick="goToVideoRecorder"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Picture at certain frame"
+        android:id="@+id/button6"
+        android:onClick="goToViewPicture"
+        />
 
 
 </LinearLayout>

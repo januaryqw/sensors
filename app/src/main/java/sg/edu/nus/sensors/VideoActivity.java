@@ -50,6 +50,8 @@ public class VideoActivity extends Activity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
+        Log.d(TAG, "before button");
+
 
         /*// Add a listener to the Capture button
         Button captureButton = (Button) findViewById(R.id.button_capture);
@@ -67,6 +69,15 @@ public class VideoActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Date date= new Date();
+                        //getTime() returns current time in milliseconds
+                        long milliseconds = System.currentTimeMillis();
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+                        Date resultDate = new Date(milliseconds);
+
+                        String ts = sdf.format(resultDate);
+                        Log.d(TAG, " " + date.getTime());
+                        Log.d(TAG, " " + ts);
                         if (isRecording) {
                             // stop recording and release camera
                             mMediaRecorder.stop();  // stop the recording
@@ -102,6 +113,7 @@ public class VideoActivity extends Activity {
      * Check if this device has a camera
      */
     private boolean checkCameraHardware(Context context) {
+        Log.d(TAG, "checking camera hardware");
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
             return true;
@@ -112,6 +124,7 @@ public class VideoActivity extends Activity {
     }
 
     public static Camera getCameraInstance() {
+        Log.d(TAG, "get camera instance");
         Camera camera = null;
         try {
             camera = Camera.open();
@@ -126,7 +139,7 @@ public class VideoActivity extends Activity {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-
+            Log.d(TAG, "mPicture");
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null) {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
@@ -153,6 +166,7 @@ public class VideoActivity extends Activity {
     }
 
     private void releaseMediaRecorder(){
+        Log.d(TAG, "release media recorder");
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();   // clear recorder configuration
             mMediaRecorder.release(); // release the recorder object
@@ -162,28 +176,32 @@ public class VideoActivity extends Activity {
     }
 
     private void releaseCamera(){
+        Log.d(TAG, "release camera");
         if (mCamera != null){
-            mCamera.stopPreview();
+            // mCamera.stopPreview();
             mCamera.release();        // release the camera for other applications
             mCamera = null;
         }
     }
     private boolean prepareVideoRecorder(){
-
+        Log.d(TAG, "prepare video recorder");
         mMediaRecorder = new MediaRecorder();
         // Step 1: Unlock and set camera to MediaRecorder
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
 
         // Step 2: Set sources
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        //mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
-        //mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        //mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
-        // mMediaRecorder.setCaptureRate(FPS);
+        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
+        mMediaRecorder.setOutputFormat(profile.fileFormat);
+        mMediaRecorder.setVideoFrameRate(profile.videoFrameRate);
+        Log.d(TAG, "Video FrameRate is " + profile.videoFrameRate); //30
+        mMediaRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
+        mMediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
+        mMediaRecorder.setVideoEncoder(profile.videoCodec);
 
 
         // Step 4: Set output file
@@ -207,12 +225,6 @@ public class VideoActivity extends Activity {
         return true;
     }
 
-
-
-
-
-
-
     /** Create a file Uri for saving an image or video */
     private static Uri getOutputMediaFileUri(int type){
         return Uri.fromFile(getOutputMediaFile(type));
@@ -220,6 +232,7 @@ public class VideoActivity extends Activity {
 
     /** Create a File for saving an image or video */
     private static File getOutputMediaFile(int type){
+        Log.d(TAG, "get output media file");
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
@@ -244,7 +257,9 @@ public class VideoActivity extends Activity {
                     "IMG_"+ timeStamp + ".jpg");
         } else if(type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
+                    "VID_TEST" + ".mp4");
+            System.out.println(mediaStorageDir.getPath() + File.separator +
+                    "VID_TEST" + ".mp4");
         } else {
             return null;
         }
@@ -254,10 +269,5 @@ public class VideoActivity extends Activity {
     public void goToMainActivity(View view){
         finish();
     }
-
-
-
-
-
 
 }

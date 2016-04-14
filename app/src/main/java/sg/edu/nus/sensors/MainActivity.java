@@ -38,6 +38,10 @@ public class MainActivity extends Activity {
         myIntent = new Intent(this, VideoActivity.class);
         startActivity(myIntent);
     }
+    public void goToViewPicture(View view){
+        myIntent = new Intent(this, ViewPictureActivity.class);
+        startActivity(myIntent);
+    }
 
 }
 

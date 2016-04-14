@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 /**
@@ -72,7 +73,12 @@ public class SoundSampler {
         this.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
         this.buffer = new short[this.bufferSize];
         this.stop = false;
-        this.fileForAudio = new File(path, "accelerometer.txt");
+        this.fileForAudio = new File(path);
+        System.out.println("file size before: "+fileForAudio.length());
+        PrintWriter writer = new PrintWriter(this.fileForAudio);
+        writer.print("");
+        writer.close();
+        System.out.println("file size after: " + fileForAudio.length());
         this.fwForAudio = new FileWriter(this.fileForAudio, true);
         this.bwForAudio = new BufferedWriter(this.fwForAudio);
 
@@ -100,7 +106,11 @@ public class SoundSampler {
                     }
                     System.out.println();
                     try {
-                        SoundSampler.bwForAudio.write(ts);
+                        SoundSampler.bwForAudio.write(ts + "\t");
+                        for (int i=0; i<SoundSampler.bufferSize; i++) {
+                            SoundSampler.bwForAudio.write(SoundSampler.buffer[i] + " ");
+                        }
+                        SoundSampler.bwForAudio.write("\n");
                     }catch(Exception e){
                         e.printStackTrace();
                         break;

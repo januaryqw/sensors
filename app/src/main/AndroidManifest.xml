@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="sg.edu.nus.sensors">
+    package="sg.edu.nus.sensors" >
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -21,8 +21,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,6 +50,9 @@
 
         <activity android:name=".ViewPictureActivity" />
         <activity android:name=".AudioVideoActivity"></activity>
+        <activity android:name=".GetCheeseSample"
+            android:label="@string/title_activity_get_cheese_sample" >
+        </activity>
     </application>
 
 </manifest>

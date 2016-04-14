@@ -45,14 +45,22 @@ public class DataReaderScrollingActivity extends AppCompatActivity {
             fr = new FileReader(this.file);
             br = new BufferedReader(fr);
             String line;
+            double max = 0;
+            String max_timestamp="";
             while((line = br.readLine())!=null){
                 contentDisplay.append(line);
                 contentDisplay.append("\n");
+                String[] tokens = line.split(",");
+                double magnitude = getAccMagnitude(Double.parseDouble(tokens[0]),Double.parseDouble(tokens[1]),Double.parseDouble(tokens[2]));
+                if (magnitude > max){
+                    max = magnitude;
+                    max_timestamp = tokens[3];
+                }
             }
+            System.out.println("max acc is "+ max+" at"+max_timestamp);
         }catch(Exception e){
             System.out.println(e);
         }
-
     }
 
     @Override
@@ -65,4 +73,9 @@ public class DataReaderScrollingActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    private double getAccMagnitude(double accX, double accY, double accZ){
+        return Math.sqrt(accX*accX+accY*accY+accZ*accZ);
+
+    }
+
 }

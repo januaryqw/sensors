@@ -9,11 +9,9 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-/**
- * Created by ngtk on 4/2/16.
- */
 
 public class SoundSampler {
+    private static final String TAG = "SoundSampler";
     private static final int  FS = 16000;     // sampling frequency
     public AudioRecord audioRecord;
     private int               audioEncoding = 2;
@@ -21,7 +19,6 @@ public class SoundSampler {
     public Thread            recordingThread;
     public  static short[]  buffer;
     public  static int      bufferSize;     // in bytes
-    public static String timestamp;
     public boolean stop;
     static File fileForAudio;
     static FileWriter fwForAudio;
@@ -67,11 +64,11 @@ public class SoundSampler {
         this.buffer = new short[this.bufferSize];
         this.stop = false;
         this.fileForAudio = new File(path);
-        System.out.println("file size before: "+fileForAudio.length());
+        Log.d(TAG, "file size before: " + fileForAudio.length());
         PrintWriter writer = new PrintWriter(this.fileForAudio);
         writer.print("");
         writer.close();
-        System.out.println("file size after: " + fileForAudio.length());
+        Log.d(TAG, "file size after: " + fileForAudio.length());
         this.fwForAudio = new FileWriter(this.fileForAudio);
         this.bwForAudio = new BufferedWriter(this.fwForAudio);
 
@@ -87,19 +84,20 @@ public class SoundSampler {
                     audioRecord.read(SoundSampler.buffer, 0, SoundSampler.bufferSize);
 
                     // the recoding timestamps
-                    System.out.println(System.nanoTime()/1000);
                     long milliseconds = System.currentTimeMillis();
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
                     Date resultDate = new Date(milliseconds);
                     String ts = sdf.format(resultDate);
-                    SoundSampler.timestamp = ts;
-                    System.out.println("Audio: " + ts + ' ' + SoundSampler.bufferSize);
+                    Log.d(TAG, "Audio: " + ts + ' ' + SoundSampler.bufferSize);
                     for (int i=0; i<SoundSampler.bufferSize; i++) {
-                        System.out.print(SoundSampler.buffer[i] + "  ");
+                        Log.d(TAG, SoundSampler.buffer[i] + "  ");
                     }
-                    System.out.println();
+                    Log.d(TAG,"\n");
+
+                    Date date = new Date();
+                    long timeStamp = date.getTime();
                     try {
-                        SoundSampler.bwForAudio.write(ts + "\t");
+                        SoundSampler.bwForAudio.write(timeStamp + "\t");
                         for (int i=0; i<SoundSampler.bufferSize; i++) {
                             SoundSampler.bwForAudio.write(SoundSampler.buffer[i] + " ");
                         }

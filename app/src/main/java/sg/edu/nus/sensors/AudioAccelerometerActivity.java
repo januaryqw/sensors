@@ -12,15 +12,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class GatherDataActivity extends Activity implements SensorEventListener{
-
+public class AudioAccelerometerActivity extends Activity implements SensorEventListener{
+    // audio_for_accelerometer.txt
+    // accelerometer.txt
+    private static final String TAG = "ViewPictureActivity";
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private sg.edu.nus.sensors.SoundSampler soundSampler;
@@ -32,7 +35,7 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gather_data);
+        setContentView(R.layout.activity_audio_accelerometer);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -40,10 +43,10 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
             this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             if (!dir.exists()){
                 if(dir.mkdirs()){
-                    System.out.println("mkdir succeed.");
+                    Log.d(TAG, "\"mkdir succeed.\"");
                 }
                 else{
-                    System.out.println("cannot mkdir");
+                    Log.d(TAG, "cannot mkdir");
                 }
             }
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
@@ -54,7 +57,6 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Toast.makeText(getApplicationContext(), "Cannot instantiate SoundSampler", Toast.LENGTH_LONG).show();
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -67,8 +69,7 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
             this.fileForAccelerometer = new File(dir, "accelerometer.txt");
             this.fwForAccelerometer = new FileWriter(this.fileForAccelerometer);
             this.bwForAccelerometer = new BufferedWriter(this.fwForAccelerometer);
-            soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
-            System.out.println("path of audio file: "+ Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio.txt");
+            soundSampler.init(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/audio_for_accelerometer.txt");
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Cannot initialize SoundSampler.", Toast.LENGTH_LONG).show();
@@ -89,6 +90,8 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
         }
         super.onStop();
     }
+
+    @Override
     public void onSensorChanged( SensorEvent event ) {
 
         // NOTE: Sensor callbacks are in the main UI thread, so do not
@@ -107,11 +110,11 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
         long milliseconds = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
         Date resultDate = new Date(milliseconds);
-
         String ts = sdf.format(resultDate);
-        // System.out.println("Accelerometer: " + oneReading + ts);
         try {
-            bwForAccelerometer.write(oneReading + ts + "\n");
+            Date date = new Date();
+            long timeStamp = date.getTime();
+            bwForAccelerometer.write(oneReading + timeStamp + "\n");
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -125,31 +128,59 @@ public class GatherDataActivity extends Activity implements SensorEventListener{
     public void goToMainActivity(View view){
         finish();
     }
+    public void stopRecording(View view) {
+        sensorManager.unregisterListener((SensorEventListener) this);
 
-    private void writeToFile(String data) {
         try {
-            // File sdCard = ;
-            // File dir = new File (sdCard.getAbsolutePath() + "/Sensors/");
-            File dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
+            soundSampler.stop();
+            this.bwForAccelerometer.close();
+            this.fwForAccelerometer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void showValues(View view){
+        long timeStampAcc = getTimeStampAccelerometer();
+        long timeStampAud = getTimeStampAudio();
+        long timeLag = timeStampAud - timeStampAcc;
+        Toast.makeText(this, "timeStamp from accelerometer: " + timeStampAcc
+                            +"timeStamp from audio: " + timeStampAud
+                            +"timelap from audio is " + timeLag, Toast.LENGTH_LONG).show();
+    }
 
-            if (!dir.exists()) {
-                if (dir.mkdirs()) {
-                    System.out.println("mkdir succeed.");
-                } else {
-                    System.out.println("cannot mkdir");
+    private double getAccMagnitude(double accX, double accY, double accZ){
+        return Math.sqrt(accX*accX+accY*accY+accZ*accZ);
+    }
+    private long getTimeStampAccelerometer(){
+        File dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
+        File file = new File(dir, "accelerometer.txt");
+        try{
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            double max = 0;
+            String max_timestamp="";
+            while((line = br.readLine())!=null){
+                String[] tokens = line.split(",");
+                double magnitude = getAccMagnitude(Double.parseDouble(tokens[0]),
+                                                   Double.parseDouble(tokens[1]),
+                                                   Double.parseDouble(tokens[2]));
+                if (magnitude > max){
+                    max = magnitude;
+                    max_timestamp = tokens[3];
                 }
             }
 
-            File file = new File(dir, "accelerometer.txt");
+            Log.d(TAG, "max acc is "+ max+" at "+max_timestamp);
+            return Long.parseLong(max_timestamp.trim());
 
-            FileWriter fw = new FileWriter(file,true); //the true will append the new data
-            fw.write(data);//appends the string to the file
-            fw.close();
-
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0L;
         }
     }
-
+    private long getTimeStampAudio(){
+        PatternRecogManager pr = new PatternRecogManager();
+        return pr.getTimeStampMaxValue(this);
+    }
 }

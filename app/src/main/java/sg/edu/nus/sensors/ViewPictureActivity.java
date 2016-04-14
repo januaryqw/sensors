@@ -12,15 +12,15 @@ import java.io.File;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
-
 public class ViewPictureActivity extends Activity {
 
     private static final String TAG = "ViewPictureActivity";
+    PatternRecogManager pr;
     ImageView img;
     private static long soundTimestamp;
-    private static long timeLag;
     private static long videoStartTimestamp;
-    PatternRecogManager pr = new PatternRecogManager();
+    private static long timeLag = 0L;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,22 +29,8 @@ public class ViewPictureActivity extends Activity {
         videoStartTimestamp  = getIntent().getLongExtra("videoStartingTime",0L);
         Toast.makeText(this, "Received VideoStartTime " + videoStartTimestamp, Toast.LENGTH_LONG).show();
 
-        PatternRecogManager pr = new PatternRecogManager();
-        double [] correlation =  pr.getCorrelation(this);
-        System.out.println("correlation: "+correlation.length);
-        double max = getMagnitude(correlation[0], correlation[1]);
-        int max_index = 0;
-        for (int i = 0; i < correlation.length; i ++) {
-            if (i % 2 == 0) {
-                double value = getMagnitude(correlation[i], correlation[i + 1]);
-                if (value > max) {
-                    max = value;
-                    max_index = i;
-                }
-            }
-        }
-        String timeStampForMaxCorrelation = pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280));
-        soundTimestamp = Long.parseLong(timeStampForMaxCorrelation);
+        pr = new PatternRecogManager();
+        soundTimestamp = pr.getTimeStampMaxCorrelation(this);
 
         img = (ImageView) findViewById(R.id.img);
 
@@ -57,10 +43,9 @@ public class ViewPictureActivity extends Activity {
 
         try {
             retriever.setDataSource(file.getAbsolutePath());
-            long timeStamp2 = soundTimestamp - videoStartTimestamp;
-            Bitmap bitmap2= retriever.getFrameAtTime(timeStamp2, retriever.OPTION_CLOSEST_SYNC);
-
-            img.setImageBitmap(bitmap2);
+            long timeStamp = soundTimestamp - videoStartTimestamp - timeLag;
+            Bitmap bitmap= retriever.getFrameAtTime(timeStamp, retriever.OPTION_CLOSEST_SYNC);
+            img.setImageBitmap(bitmap);
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
         } catch (RuntimeException ex) {
@@ -76,12 +61,4 @@ public class ViewPictureActivity extends Activity {
     public void goToMainActivity(View view){
         finish();
     }
-
-    private double getMagnitude(double real, double imag){
-        return Math.log(real * real + imag * imag);
-    }
-
-
-
-
 }

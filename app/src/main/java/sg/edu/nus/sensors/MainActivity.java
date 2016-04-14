@@ -3,26 +3,20 @@ package sg.edu.nus.sensors;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
     Intent myIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //PatternRecogManager pr = new PatternRecogManager();
-        //System.out.println(pr.getRecordedAudioList(this,1));
-    }
-
-    //accelerometer
-    public void goToAccelerometer(View view){
-        myIntent = new Intent(this, AccelerometerActivity.class);
-        startActivity(myIntent);
     }
 
     public void getAudioAndAccelerometerData(View view){
-        myIntent = new Intent(this, GatherDataActivity.class);
+        myIntent = new Intent(this, AudioAccelerometerActivity.class);
         startActivity(myIntent);
     }
 
@@ -34,7 +28,7 @@ public class MainActivity extends Activity {
     public void goToPatternRecog(View view){
         PatternRecogManager pr = new PatternRecogManager();
         double [] correlation =  pr.getCorrelation(this);
-        System.out.println("correlation: "+correlation.length);
+        Log.d(TAG, "correlation: "+correlation.length);
         double max = getMagnitude(correlation[0], correlation[1]);
         int max_index = 0;
         for (int i = 0; i < correlation.length; i ++) {
@@ -46,7 +40,9 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        System.out.println("max: " + max + " index: " + max_index + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
+        Log.d(TAG, "max: " + max
+                + " index: " + max_index
+                + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
     }
     public void goToGetCheeseSample(View view){
         myIntent = new Intent(this, GetCheeseSample.class);

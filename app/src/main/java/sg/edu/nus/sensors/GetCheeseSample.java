@@ -3,6 +3,7 @@ package sg.edu.nus.sensors;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -10,23 +11,23 @@ import java.io.File;
 
 public class GetCheeseSample extends Activity{
 
-
+    private static final String TAG = "GetCheeseSample";
     private sg.edu.nus.sensors.SoundSampler soundSampler;
     private File dir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gather_data);
+        setContentView(R.layout.activity_get_cheese_sample);
 
         try {
             this.dir = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sensors/");
             if (!dir.exists()){
                 if(dir.mkdirs()){
-                    System.out.println("mkdir succeed.");
+                    Log.d(TAG, "\"mkdir succeed.\"");
                 }
                 else{
-                    System.out.println("cannot mkdir");
+                    Log.d(TAG, "cannot mkdir");
                 }
             }
 

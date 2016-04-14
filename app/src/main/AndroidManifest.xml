@@ -30,8 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AccelerometerActivity" />
-        <activity android:name=".GatherDataActivity" />
+        <activity android:name=".AudioAccelerometerActivity" />
         <activity
             android:name=".DataReaderScrollingActivity"
             android:label="@string/title_activity_data_reader_scrolling"

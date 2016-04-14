@@ -53,13 +53,12 @@ public class AudioVideoActivity extends Activity{
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
-        Log.d(TAG, "before button");
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Camera.getCameraInfo(0,new Camera.CameraInfo());
+                        Camera.getCameraInfo(0, new Camera.CameraInfo());
                         toggleButtonText(v, isRecording);
                         if (isRecording) {
                             //getTime() returns current time in milliseconds
@@ -76,7 +75,7 @@ public class AudioVideoActivity extends Activity{
 
                             try {
                                 soundSampler.stop();
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -140,15 +139,7 @@ public class AudioVideoActivity extends Activity{
         super.onStop();
     }
 
-    private void toggleButtonText(View v, boolean isRecording){
-        Button button = (Button) v;
-        if (isRecording){
-            button.setText("Start Recording");
-        }
-        else{
-            button.setText("Stop Recording");
-        }
-    }
+
     /**
      * Check if this device has a camera
      */
@@ -162,7 +153,7 @@ public class AudioVideoActivity extends Activity{
         }
     }
 
-    public static Camera getCameraInstance() {
+    private static Camera getCameraInstance() {
         Camera camera = null;
         try {
             if (Camera.getNumberOfCameras() == 2){
@@ -176,6 +167,42 @@ public class AudioVideoActivity extends Activity{
             e.printStackTrace();
         }
         return camera;
+    }
+    /** Create a File for saving an image or video */
+    private static File getOutputMediaFile(int type){
+        Log.d(TAG, "get output media file");
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MySensorApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("MySensorApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_TEST" + ".mp4");
+            Log.d(TAG, mediaStorageDir.getPath() + File.separator +
+                    "VID_TEST" + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
     }
 
     android.hardware.Camera.PictureCallback mPicture = new Camera.PictureCallback() {
@@ -260,42 +287,16 @@ public class AudioVideoActivity extends Activity{
         return true;
     }
 
-    /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
-        Log.d(TAG, "get output media file");
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MySensorApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("MySensorApp", "failed to create directory");
-                return null;
-            }
+    private void toggleButtonText(View v, boolean isRecording){
+        Button button = (Button) v;
+        if (isRecording){
+            button.setText("Start Recording");
         }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_TEST" + ".mp4");
-            Log.d(TAG, mediaStorageDir.getPath() + File.separator +
-                    "VID_TEST" + ".mp4");
-        } else {
-            return null;
+        else{
+            button.setText("Stop Recording");
         }
-
-        return mediaFile;
     }
+
     public void goToMainActivity(View view){
         finish();
     }
@@ -307,6 +308,8 @@ public class AudioVideoActivity extends Activity{
 
         bO.putLong("videoStartingTime", videoStartingTimestamp);
         myIntent.putExtras(bO);
+        AudioVideoActivity.this.finish();
         startActivity(myIntent);
     }
+
 }

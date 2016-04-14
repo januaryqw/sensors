@@ -2,6 +2,7 @@ package sg.edu.nus.sensors;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -22,16 +23,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AudioVideoActivity extends Activity{
-    public static CamRecorderSurfaceView surfaceView;
+    private static final String TAG = "AudioVideoActivity";
     static Camera mCamera;
     static MediaRecorder mMediaRecorder;
-    private static final String TAG = "AudioVideoActivity";
+    private sg.edu.nus.sensors.SoundSampler soundSampler;
+    private SurfaceView mPreview;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private boolean isRecording = false;
-    private SurfaceView mPreview;
+    private long videoStartingTimestamp;
 
-    private sg.edu.nus.sensors.SoundSampler soundSampler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class AudioVideoActivity extends Activity{
                                 Date resultDate = new Date(milliseconds);
                                 String ts = sdf.format(resultDate);
                                 Log.d(TAG, "MediaRecorder Start Time: " + date.getTime() + "    " + ts);
-
+                                videoStartingTimestamp = date.getTime();
                                 mMediaRecorder.start();
 
                                 // inform the user that recording has started
@@ -117,6 +118,26 @@ public class AudioVideoActivity extends Activity{
         );
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        releaseCamera();              // release the camera immediately on pause event
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            soundSampler.stop();
+            releaseMediaRecorder();
+            releaseCamera();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        super.onStop();
+    }
+
     private void toggleButtonText(View v, boolean isRecording){
         Button button = (Button) v;
         if (isRecording){
@@ -171,13 +192,6 @@ public class AudioVideoActivity extends Activity{
             }
         }
     };
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
-        releaseCamera();              // release the camera immediately on pause event
-    }
 
     private void releaseMediaRecorder(){
         Log.d(TAG, "release media recorder");
@@ -279,15 +293,13 @@ public class AudioVideoActivity extends Activity{
         finish();
     }
 
+    public void goToViewPicture(View view){
+        Intent myIntent;
+        myIntent = new Intent(this, ViewPictureActivity.class);
+        Bundle bO = new Bundle();
 
-    protected void onStop() {
-        try {
-            soundSampler.stop();
-            releaseMediaRecorder();
-            releaseCamera();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        super.onStop();
+        bO.putLong("videoStartingTime", videoStartingTimestamp);
+        myIntent.putExtras(bO);
+        startActivity(myIntent);
     }
 }

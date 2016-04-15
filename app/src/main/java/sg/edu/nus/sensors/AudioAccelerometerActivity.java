@@ -146,6 +146,9 @@ public class AudioAccelerometerActivity extends Activity implements SensorEventL
         Toast.makeText(this, "timeStamp from accelerometer: " + timeStampAcc
                             +"timeStamp from audio: " + timeStampAud
                             +"timelap from audio is " + timeLag, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "timeStamp from accelerometer: " + timeStampAcc
+                    +"timeStamp from audio: " + timeStampAud
+                    +"timelap from audio is " + timeLag);
     }
 
     private double getAccMagnitude(double accX, double accY, double accZ){

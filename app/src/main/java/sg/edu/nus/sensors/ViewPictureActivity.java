@@ -19,7 +19,7 @@ public class ViewPictureActivity extends Activity {
     ImageView img;
     private static long soundTimestamp;
     private static long videoStartTimestamp;
-    private static long timeLag = 0L;
+    private static long timeLag = 1564L;
 
 
     @Override
@@ -43,7 +43,7 @@ public class ViewPictureActivity extends Activity {
 
         try {
             retriever.setDataSource(file.getAbsolutePath());
-            long timeStamp = soundTimestamp - videoStartTimestamp - timeLag;
+            long timeStamp = soundTimestamp - videoStartTimestamp + timeLag;
             Bitmap bitmap= retriever.getFrameAtTime(timeStamp, retriever.OPTION_CLOSEST_SYNC);
             img.setImageBitmap(bitmap);
         } catch (IllegalArgumentException ex) {

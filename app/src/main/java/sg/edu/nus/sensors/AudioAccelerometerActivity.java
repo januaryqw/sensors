@@ -184,6 +184,6 @@ public class AudioAccelerometerActivity extends Activity implements SensorEventL
     }
     private long getTimeStampAudio(){
         PatternRecogManager pr = new PatternRecogManager();
-        return pr.getTimeStampMaxValue(this);
+        return pr.getTimeStampMaxValue(this, 3);
     }
 }

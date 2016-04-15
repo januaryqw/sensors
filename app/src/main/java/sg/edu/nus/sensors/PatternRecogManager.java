@@ -148,7 +148,7 @@ public class PatternRecogManager {
             while((line = br.readLine())!=null){
                 String[] tokens = line.split("\t");
                 long timestamp = Long.parseLong(tokens[0]);
-                if (option == 1){
+                if (option == 1||option ==3){
                     timestamps.add(timestamp);
                 }
                 String valuesString = tokens[1].trim();

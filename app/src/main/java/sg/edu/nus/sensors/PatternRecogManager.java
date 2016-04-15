@@ -29,10 +29,15 @@ public class PatternRecogManager {
                 }
             }
         }
-        Log.d(TAG, "max: " + max + " index: " + max_index
-                + " timestamp: " + this.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
-
-        return this.timestamps.get((int) Math.ceil(max_index / 2 / 1280));
+        int timeIndex = (int) Math.ceil(max_index / 2 / 1280);
+        if (this.timestamps.size() > timeIndex) {
+            Log.d(TAG, "max: " + max + " index: " + max_index
+                    + " timestamp: " + this.timestamps.get(timeIndex));
+            return this.timestamps.get(timeIndex);
+        }else{
+            Log.d(TAG, "please record longer!");
+            return 0L;
+        }
     }
 
 

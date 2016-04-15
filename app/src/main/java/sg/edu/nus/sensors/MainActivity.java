@@ -41,14 +41,21 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        Log.d(TAG, "max correlation: " + max
-                + " index of max: " + max_index
-                + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)));
-        Toast.makeText(getApplicationContext(),
-                "max correlation: " + max
-                + " index of max: " + max_index
-                + " timestamp: " + pr.timestamps.get((int) Math.ceil(max_index / 2 / 1280)),
-                Toast.LENGTH_LONG).show();
+        int timeIndex = (int) Math.ceil(max_index / 2 / 1280);
+        if (pr.timestamps.size() > timeIndex) {
+            Log.d(TAG, "max correlation: " + max
+                    + " index of max: " + max_index
+                    + " timestamp: " + pr.timestamps.get(timeIndex));
+            Toast.makeText(getApplicationContext(),
+                    "max correlation: " + max
+                            + " index of max: " + max_index
+                            + " timestamp: " + pr.timestamps.get(timeIndex),
+                    Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(getApplicationContext(),
+                    "Record longer to get the result",
+                    Toast.LENGTH_LONG).show();
+        }
     }
     public void goToGetCheeseSample(View view){
         myIntent = new Intent(this, GetCheeseSample.class);
